@@ -1,32 +1,31 @@
 name: Deploy to GitHub Pages
 on:
   push:
-    branches: [ main ]
+    branches: [main]
+
 jobs:
-  deploy-to-github-pages:
-    # use ubuntu-latest image to run steps on 
+  build:
     runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
     - name: Setup .NET Core SDK
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v2
       with:
         dotnet-version: 6.0.307
-    - name: Publish .NET Core Project
-      run: dotnet publish ./TestServer.sln -c Release -o release --nologo
-    # changes the base-tag in index.html from '/' to 'BlazorGitHubPagesDemo' to match GitHub Pages repository subdirectory
-    - name: Change base-tag in index.html from / to TestServer
-      run: sed -i 's/<base href="\/" \/>/<base href="\/TestServer\/" \/>/g' ./Pages/_Layout.cshtml
-      # copy index.html to 404.html to serve the same file when a file is not found
-    - name: copy _Layout.cshtml to 404.html
-      run: cp ./Pages/_Layout.cshtml release/wwwroot/404.html
-      # add .nojekyll file to tell GitHub pages to not treat this as a Jekyll project. (Allow files and folders starting with an underscore)
-    - name: Add .nojekyll file
-      run: touch release/wwwroot/.nojekyll
-      
-    - name: Commit wwwroot to GitHub Pages
-      uses: JamesIves/github-pages-deploy-action@3.7.1
+
+    - name: Build and publish Blazor app
+      run: |
+        dotnet publish ./TestServer.sln -c Release -o publish
+        sed -i 's/<base href="\/" \/>/<base href="\/TestServer\/" \/>/g' ./Pages/_Layout.cshtml
+        cp ./Pages/_Layout.cshtml publish/wwwroot/404.html
+        touch publish/wwwroot/.nojekyll
+
+    - name: Deploy to GitHub Pages
+      uses: JamesIves/github-pages-deploy-action@4
       with:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         BRANCH: gh-pages
-        FOLDER: release/wwwroot
+        FOLDER: publish/wwwroot
