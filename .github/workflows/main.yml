@@ -18,8 +18,8 @@ jobs:
     - name: Change base-tag in index.html from / to TestServer
       run: sed -i 's/<base href="\/" \/>/<base href="\/TestServer\/" \/>/g' ./Pages/_Layout.cshtml
       # copy index.html to 404.html to serve the same file when a file is not found
-    - name: copy _Host.cshtml to 404.html
-      run: cp ./Pages/_Host.cshtml release/wwwroot/404.html
+    - name: copy _Layout.cshtml to 404.html
+      run: cp ./Pages/_Layout.cshtml release/wwwroot/404.html
       # add .nojekyll file to tell GitHub pages to not treat this as a Jekyll project. (Allow files and folders starting with an underscore)
     - name: Add .nojekyll file
       run: touch release/wwwroot/.nojekyll
