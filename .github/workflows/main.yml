@@ -16,7 +16,7 @@ jobs:
       run: dotnet publish ./TestServer.sln -c Release -o release --nologo
     # changes the base-tag in index.html from '/' to 'BlazorGitHubPagesDemo' to match GitHub Pages repository subdirectory
     - name: Change base-tag in index.html from / to TestServer
-      run: sed -i 's/<base href="\/" \/>/<base href="\/TestServer\/" \/>/g' release/wwwroot/index.html
+      run: sed -i 's/<base href="\/" \/>/<base href="\/TestServer\/" \/>/g' release/Pages/_Host.cshtml
       # copy index.html to 404.html to serve the same file when a file is not found
     - name: copy _Host.cshtml to 404.html
       run: cp release/Pages/_Host.cshtml release/wwwroot/404.html
